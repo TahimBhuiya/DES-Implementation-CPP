@@ -136,4 +136,40 @@ int p[] = {16,  7, 20, 21,
            19, 13, 30,  6,
            22, 11,  4, 25 };
 
+// Function to compute the round function
+bitset<32> f(bitset<32> r, bitset<48> k)
+{
+    bitset<48> expand_r;
+
+    // Expansion permutation
+    for(int i = 0; i < 48; ++i)
+        expand_r[47 - i] = r[32 - e[i]];
+
+    // XOR with round key
+    expand_r = expand_r ^ k;
+
+    bitset<32> output;
+    int x = 0;
+    // Applying S-box substitution
+    for(int i = 0; i < 48; i = i + 6)
+    {
+        int row = expand_r[47 - i] * 2 + expand_r[47 - i - 5];
+        int col = expand_r[47 - i - 1] * 8 + expand_r[47 - i - 2] * 4 + expand_r[47 - i - 3] * 2 + expand_r[47 - i - 4];
+        int num = s_box[i / 6][row][col];
+        bitset<4> binary(num);
+        output[31 - x] = binary[3];
+        output[31 - x - 1] = binary[2];
+        output[31 - x - 2] = binary[1];
+        output[31 - x - 3] = binary[0];
+        x += 4;
+    }
+
+    bitset<32> temp = output;
+    // Permutation
+    for(int i = 0; i < 32; ++i)
+        output[31 - i] = temp[32 - p[i]];
+
+    return output;
+}
+
 
