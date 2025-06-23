@@ -172,4 +172,17 @@ bitset<32> f(bitset<32> r, bitset<48> k)
     return output;
 }
 
+// Function to perform left circular shift on the key
+bitset<28> left_shift(bitset<28> k, int shift)
+{
+    bitset<28> temp = k;
+    for(int i = 27; i >= 0; --i)
+    {
+        if(i - shift < 0)
+            k[i] = temp[i - shift + 28];
+        else
+            k[i] = temp[i - shift];
+    }
+    return k;
+}
 
