@@ -244,3 +244,47 @@ string bitset_to_string(bitset<64> bit){
     return res;
 }
 
+// Function to encrypt the plaintext using DES algorithm
+bitset<64> encrypt(bitset<64>& plain)
+{
+    bitset<64> cipher;     // Create a bitset to store the encrypted ciphertext
+    bitset<64> current_bits;
+    bitset<32> left;
+    bitset<32> right;
+    bitset<32> new_left;
+
+    // Initial permutation of the plaintext
+    for(int i = 0; i < 64; ++i)
+        current_bits[63 - i] = plain[64 - ip[i]];
+
+    // Split the plaintext into left and right halves
+    for(int i = 32; i < 64; ++i)
+        left[i - 32] = current_bits[i];
+    for(int i = 0; i < 32; ++i)
+        right[i] = current_bits[i];
+    
+    // Perform 16 rounds of DES encryption
+    for(int round = 0; round < 16; ++round)
+    {
+        // Save the previous left half
+        new_left = right;
+        // Compute the new right half using the round function and subkey
+        right = left ^ f(right, sub_key[round]);
+        // Set the new left half to the previous right half
+        left = new_left;
+    }
+    
+    // Combine the left and right halves
+    for(int i = 0; i < 32; ++i)
+        cipher[i] = left[i];
+    for(int i = 32; i < 64; ++i)
+        cipher[i] = right[i - 32];
+
+    // Final permutation of the ciphertext
+    current_bits = cipher;
+    for(int i = 0; i < 64; ++i)
+        cipher[63 - i] = current_bits[64 - ip_1[i]];
+
+    return cipher;
+}
+
