@@ -186,3 +186,37 @@ bitset<28> left_shift(bitset<28> k, int shift)
     return k;
 }
 
+void generate_keys() 
+{
+    bitset<56> key_real;    
+    bitset<28> left;       
+    bitset<28> right;      
+    bitset<48> key_compress;
+
+   
+    for (int i = 0; i < 56; ++i)
+        key_real[55 - i] = key[64 - pc_1[i]];
+
+
+    for(int round = 0; round < 16; ++round) 
+    {
+        for(int i = 28; i < 56; ++i)
+            left[i - 28] = key_real[i];
+        for(int i = 0; i < 28; ++i)
+            right[i] = key_real[i];
+        
+        left = left_shift(left, shift_bits[round]);
+        right = left_shift(right, shift_bits[round]);
+        
+        for(int i = 28; i < 56; ++i)
+            key_real[i] = left[i - 28];
+        for(int i = 0; i < 28; ++i)
+            key_real[i] = right[i];
+        
+        for(int i = 0; i < 48; ++i)
+            key_compress[47 - i] = key_real[56 - pc_2[i]];
+        
+        sub_key[round] = key_compress;
+    }
+}
+
