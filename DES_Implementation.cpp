@@ -1,6 +1,4 @@
 //Tahim Bhuiya
-//Assignment 2
-//03/04/2024
 
 
 #include <iostream>
