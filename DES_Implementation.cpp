@@ -331,3 +331,29 @@ bitset<64> decrypt(bitset<64>& cipher)
 
     return plain;
 }
+
+int main() {
+    string plain_text, key_text;
+    cout << "Enter the plaintext (Must be 64 bits): ";
+    cin >> plain_text;
+    cout << "Enter the key (Must be 64 bits): ";
+    cin >> key_text;
+
+    if (plain_text.length() != 8 || key_text.length() != 8) {
+        cout << "Error: Plaintext and key must be 64 bits each." << endl;
+        return 1;
+    }
+
+    bitset<64> plain = char_to_bitset(plain_text.c_str());
+    key = char_to_bitset(key_text.c_str());
+
+    generate_keys();   // Generate subkeys for encryption and decryption
+
+    bitset<64> cipher = encrypt(plain); // Encrypt the plaintext
+    cout << "Cipher Text: " << cipher << endl;
+
+    bitset<64> decrypted_plain = decrypt(cipher); // Decrypt the ciphertext
+    cout << "Decrypted Plain Text: " << bitset_to_string(decrypted_plain) << endl;
+
+    return 0;
+}
