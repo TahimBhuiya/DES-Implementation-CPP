@@ -220,3 +220,13 @@ void generate_keys()
     }
 }
 
+// Function to convert a character array to a bitset
+bitset<64> char_to_bitset(const char s[8])
+{
+    bitset<64> bits;
+    for(int i = 0; i < 8; ++i)
+        for(int j = 0; j < 8; ++j)
+            bits[i * 8 + j] = ((s[i] >> j) & 1);
+    return bits;
+}
+
