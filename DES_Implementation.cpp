@@ -230,3 +230,17 @@ bitset<64> char_to_bitset(const char s[8])
     return bits;
 }
 
+// Function to convert a bitset to a string
+string bitset_to_string(bitset<64> bit){
+    string res;
+    for(int i = 0; i < 8; ++i){
+        char c = 0x00;
+        for(int j = 7; j >= 0; j--){
+            c = c + bit[i * 8 + j];     
+            if(j != 0) c = c * 2;   // Left shift
+        }       
+        res.push_back(c);
+    }
+    return res;
+}
+
