@@ -236,19 +236,27 @@ bitset<32> f(bitset<32> r, bitset<48> k)
 }
 
 
-// Function to perform left circular shift on the key
+// Function to perform left circular shift on a 28-bit key half:
+// Used in the key schedule step of DES where each 28-bit half (C and D)
+// is rotated left by 1 or 2 bits depending on the round number.
+// The shift is circular, meaning bits that are shifted out from the left
+// reappear on the right.
 bitset<28> left_shift(bitset<28> k, int shift)
 {
-    bitset<28> temp = k;
-    for(int i = 27; i >= 0; --i)
+    bitset<28> temp = k; // Store original bits for reference
+
+    for (int i = 27; i >= 0; --i)
     {
-        if(i - shift < 0)
+        // If the index goes out of bounds on the left, wrap it around (circular shift)
+        if (i - shift < 0)
             k[i] = temp[i - shift + 28];
         else
             k[i] = temp[i - shift];
     }
-    return k;
+
+    return k; // Return the shifted result
 }
+
 
 void generate_keys() 
 {
