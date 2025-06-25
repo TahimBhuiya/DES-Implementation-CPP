@@ -37,25 +37,36 @@ int ip_1[] = {
 };
 
 
-// Permuted Choice 1 (PC-1) table for key schedule
-int pc_1[] = {57, 49, 41, 33, 25, 17, 9,
-              1, 58, 50, 42, 34, 26, 18,
-              10,  2, 59, 51, 43, 35, 27,
-              19, 11,  3, 60, 52, 44, 36,
-              63, 55, 47, 39, 31, 23, 15,
-              7, 62, 54, 46, 38, 30, 22,
-              14,  6, 61, 53, 45, 37, 29,
-              21, 13,  5, 28, 20, 12,  4};
+// Permuted Choice 1 (PC-1) table:
+// This table is used to permute the original 64-bit key by selecting 
+// 56 bits in a specific order, discarding the 8 parity bits (positions 8, 16, ..., 64).
+// The result is split into two 28-bit halves (C and D) for further processing.
+int pc_1[] = {
+    57, 49, 41, 33, 25, 17, 9,
+     1, 58, 50, 42, 34, 26, 18,
+    10,  2, 59, 51, 43, 35, 27,
+    19, 11,  3, 60, 52, 44, 36,
+    63, 55, 47, 39, 31, 23, 15,
+     7, 62, 54, 46, 38, 30, 22,
+    14,  6, 61, 53, 45, 37, 29,
+    21, 13,  5, 28, 20, 12,  4
+};
 
-// Permuted Choice 2 (PC-2) table for key schedule
-int pc_2[] = {14, 17, 11, 24,  1,  5,
-              3, 28, 15,  6, 21, 10,
-              23, 19, 12,  4, 26,  8,
-              16,  7, 27, 20, 13,  2,
-              41, 52, 31, 37, 47, 55,
-              30, 40, 51, 45, 33, 48,
-              44, 49, 39, 56, 34, 53,
-              46, 42, 50, 36, 29, 32};
+// Permuted Choice 2 (PC-2) table:
+// After rotating the halves from PC-1, this table selects 48 out of the 56 bits 
+// to form a subkey for each of the 16 DES rounds. The selection is done 
+// according to the specified permutation order.
+int pc_2[] = {
+    14, 17, 11, 24,  1,  5,
+     3, 28, 15,  6, 21, 10,
+    23, 19, 12,  4, 26,  8,
+    16,  7, 27, 20, 13,  2,
+    41, 52, 31, 37, 47, 55,
+    30, 40, 51, 45, 33, 48,
+    44, 49, 39, 56, 34, 53,
+    46, 42, 50, 36, 29, 32
+};
+
 
 
 // Number of left shifts for each round key
