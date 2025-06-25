@@ -176,28 +176,47 @@ int p[] = {
 };
 
 
-// Function to compute the round function
+// Function to compute the DES round function (f-function):
+// Takes a 32-bit half-block 'r' and a 48-bit round key 'k'.
+// The steps are: Expansion → XOR with key → S-box substitution → Permutation.
 bitset<32> f(bitset<32> r, bitset<48> k)
 {
     bitset<48> expand_r;
 
-    // Expansion permutation
-    for(int i = 0; i < 48; ++i)
+    // Step 1: Expansion permutation (32 → 48 bits)
+    // The 32-bit input is expanded to 48 bits using the E table.
+    // This duplicates some bits and reorders them to prepare for mixing with the subkey.
+    for (int i = 0; i < 48; ++i)
         expand_r[47 - i] = r[32 - e[i]];
 
-    // XOR with round key
+    // Step 2: XOR with the round key
+    // The expanded block is XORed with the 48-bit subkey for this round.
     expand_r = expand_r ^ k;
 
     bitset<32> output;
     int x = 0;
-    // Applying S-box substitution
-    for(int i = 0; i < 48; i = i + 6)
+
+    // Step 3: S-box substitution (48 → 32 bits)
+    // Divide the 48-bit result into 8 chunks of 6 bits.
+    // Each chunk is processed through its corresponding S-box (S1 to S8).
+    for (int i = 0; i < 48; i += 6)
     {
+        // Extract the 6-bit chunk for the current S-box.
+        // Determine row using the 1st and 6th bits.
         int row = expand_r[47 - i] * 2 + expand_r[47 - i - 5];
-        int col = expand_r[47 - i - 1] * 8 + expand_r[47 - i - 2] * 4 + expand_r[47 - i - 3] * 2 + expand_r[47 - i - 4];
+        
+        // Determine column using the 2nd to 5th bits.
+        int col = expand_r[47 - i - 1] * 8 +
+                  expand_r[47 - i - 2] * 4 +
+                  expand_r[47 - i - 3] * 2 +
+                  expand_r[47 - i - 4];
+
+        // Lookup the S-box value
         int num = s_box[i / 6][row][col];
+
+        // Convert the S-box output (4 bits) to binary and store it in the output
         bitset<4> binary(num);
-        output[31 - x] = binary[3];
+        output[31 - x]     = binary[3];
         output[31 - x - 1] = binary[2];
         output[31 - x - 2] = binary[1];
         output[31 - x - 3] = binary[0];
@@ -205,12 +224,17 @@ bitset<32> f(bitset<32> r, bitset<48> k)
     }
 
     bitset<32> temp = output;
-    // Permutation
-    for(int i = 0; i < 32; ++i)
+
+    // Step 4: Permutation (P-box)
+    // The 32-bit output of the S-boxes is permuted using the P-table
+    // to spread the influence of individual bits and enhance diffusion.
+    for (int i = 0; i < 32; ++i)
         output[31 - i] = temp[32 - p[i]];
 
+    // Final 32-bit output of the round function
     return output;
 }
+
 
 // Function to perform left circular shift on the key
 bitset<28> left_shift(bitset<28> k, int shift)
