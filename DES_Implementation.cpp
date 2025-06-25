@@ -93,7 +93,13 @@ int e[] = {
 };
 
 
-// S-boxes for the round function
+// S-boxes (Substitution Boxes) used in the DES round function:
+// There are 8 S-boxes (S1 to S8), each taking a 6-bit input and producing a 4-bit output.
+// The input to an S-box is split as follows:
+// - The first and last bits (bits 1 and 6) form a 2-bit number that selects the row.
+// - The middle four bits (bits 2 to 5) form a 4-bit number that selects the column.
+// The selected value is the 4-bit output of the S-box.
+// These S-boxes provide the non-linearity in DES, which is essential for cryptographic strength.
 int s_box[8][4][16] = {
     // S1
     {
