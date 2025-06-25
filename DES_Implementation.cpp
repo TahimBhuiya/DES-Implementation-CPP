@@ -69,8 +69,12 @@ int pc_2[] = {
 
 
 
-// Number of left shifts for each round key
+// Number of left circular shifts for each round of the key schedule:
+// DES performs 16 rounds, and in each round, the two 28-bit halves (C and D)
+// from the key are shifted left by 1 or 2 bits depending on the round.
+// These shifts introduce key variation and are essential for security.
 int shift_bits[] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
+
 
 // Expansion table for the round function
 int e[] = {32,  1,  2,  3,  4,  5,
