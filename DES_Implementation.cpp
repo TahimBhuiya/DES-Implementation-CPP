@@ -258,39 +258,50 @@ bitset<28> left_shift(bitset<28> k, int shift)
 }
 
 
+// Function to generate 16 round keys for DES encryption:
+// This function applies the PC-1 permutation to the original 64-bit key,
+// splits it into two 28-bit halves, performs left circular shifts,
+// then applies PC-2 to generate a 48-bit subkey for each round.
 void generate_keys() 
 {
-    bitset<56> key_real;    
-    bitset<28> left;       
-    bitset<28> right;      
-    bitset<48> key_compress;
+    bitset<56> key_real;      // 56-bit key after applying PC-1 (parity bits removed)
+    bitset<28> left;          // Left half of the key (C)
+    bitset<28> right;         // Right half of the key (D)
+    bitset<48> key_compress;  // 48-bit subkey after applying PC-2
 
-   
+    // Step 1: Apply Permuted Choice 1 (PC-1) to the original 64-bit key
+    // This removes 8 parity bits and permutes the remaining 56 bits
     for (int i = 0; i < 56; ++i)
         key_real[55 - i] = key[64 - pc_1[i]];
 
-
-    for(int round = 0; round < 16; ++round) 
+    // Step 2: Generate 16 subkeys for each round
+    for (int round = 0; round < 16; ++round) 
     {
-        for(int i = 28; i < 56; ++i)
-            left[i - 28] = key_real[i];
-        for(int i = 0; i < 28; ++i)
-            right[i] = key_real[i];
-        
+        // Split the 56-bit key into two 28-bit halves
+        for (int i = 28; i < 56; ++i)
+            left[i - 28] = key_real[i];      // Left half (C)
+        for (int i = 0; i < 28; ++i)
+            right[i] = key_real[i];          // Right half (D)
+
+        // Step 3: Perform left circular shifts as defined by shift_bits table
         left = left_shift(left, shift_bits[round]);
         right = left_shift(right, shift_bits[round]);
-        
-        for(int i = 28; i < 56; ++i)
+
+        // Combine the shifted halves back into a 56-bit key
+        for (int i = 28; i < 56; ++i)
             key_real[i] = left[i - 28];
-        for(int i = 0; i < 28; ++i)
+        for (int i = 0; i < 28; ++i)
             key_real[i] = right[i];
-        
-        for(int i = 0; i < 48; ++i)
+
+        // Step 4: Apply Permuted Choice 2 (PC-2) to generate a 48-bit subkey
+        for (int i = 0; i < 48; ++i)
             key_compress[47 - i] = key_real[56 - pc_2[i]];
-        
+
+        // Store the subkey for this round
         sub_key[round] = key_compress;
     }
 }
+
 
 // Function to convert a character array to a bitset
 bitset<64> char_to_bitset(const char s[8])
