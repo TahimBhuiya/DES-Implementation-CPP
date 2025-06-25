@@ -159,15 +159,22 @@ int s_box[8][4][16] = {
     }
 };
 
-// Permutation table for the round function
-int p[] = {16,  7, 20, 21,
-           29, 12, 28, 17,
-            1, 15, 23, 26,
-            5, 18, 31, 10,
-            2,  8, 24, 14,
-           32, 27,  3,  9,
-           19, 13, 30,  6,
-           22, 11,  4, 25 };
+// Permutation (P-box) table used in the DES round function (f-function):
+// After the 8 S-box substitutions (resulting in a 32-bit output),
+// this table is used to permute the bits to enhance diffusion.
+// The reordering helps spread the influence of each S-box output bit 
+// across multiple positions in the final 32-bit result of the f-function.
+int p[] = {
+    16,  7, 20, 21,
+    29, 12, 28, 17,
+     1, 15, 23, 26,
+     5, 18, 31, 10,
+     2,  8, 24, 14,
+    32, 27,  3,  9,
+    19, 13, 30,  6,
+    22, 11,  4, 25
+};
+
 
 // Function to compute the round function
 bitset<32> f(bitset<32> r, bitset<48> k)
