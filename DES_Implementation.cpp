@@ -303,15 +303,26 @@ void generate_keys()
 }
 
 
-// Function to convert a character array to a bitset
+// Function to convert an 8-character array (64 bits) into a 64-bit bitset
 bitset<64> char_to_bitset(const char s[8])
 {
-    bitset<64> bits;
-    for(int i = 0; i < 8; ++i)
-        for(int j = 0; j < 8; ++j)
+    bitset<64> bits; // Declare a 64-bit bitset to store the result
+
+    // Loop through each of the 8 characters
+    for (int i = 0; i < 8; ++i)
+    {
+        // For each character, extract each of its 8 bits (LSB to MSB)
+        for (int j = 0; j < 8; ++j)
+        {
+            // Right-shift the character by j positions and isolate the least significant bit
+            // Store it at the correct position in the 64-bit bitset
             bits[i * 8 + j] = ((s[i] >> j) & 1);
-    return bits;
+        }
+    }
+
+    return bits; // Return the populated bitset
 }
+
 
 // Function to convert a bitset to a string
 string bitset_to_string(bitset<64> bit){
