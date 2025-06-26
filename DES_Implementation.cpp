@@ -436,16 +436,25 @@ bitset<64> decrypt(bitset<64>& cipher)
 
 
 int main() {
-    string plain_text, key_text;
+    string plain_text, key_text;  // Strings to hold the user input for plaintext and key
+
+    // Prompt user to enter 64-bit (8-character) plaintext
     cout << "Enter the plaintext (Must be 64 bits): ";
     cin >> plain_text;
+
+    // Prompt user to enter 64-bit (8-character) key
     cout << "Enter the key (Must be 64 bits): ";
     cin >> key_text;
 
+    // Validate that both plaintext and key are exactly 8 characters (8 * 8 = 64 bits)
     if (plain_text.length() != 8 || key_text.length() != 8) {
         cout << "Error: Plaintext and key must be 64 bits each." << endl;
-        return 1;
+        return 1;  // Exit the program with an error code
     }
+
+    // (Rest of the code would typically include conversion to bitsets, key generation, and encryption/decryption)
+}
+
 
     bitset<64> plain = char_to_bitset(plain_text.c_str());
     key = char_to_bitset(key_text.c_str());
