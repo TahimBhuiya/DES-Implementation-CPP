@@ -392,49 +392,48 @@ bitset<64> encrypt(bitset<64>& plain)
 }
 
 
-// Function to decrypt the ciphertext using DES algorithm
+// Function to decrypt the ciphertext using the DES algorithm
 bitset<64> decrypt(bitset<64>& cipher)
 {
-    bitset<64> plain;      // Create a bitset to store the decrypted plaintext
-    bitset<64> current_bits;
-    bitset<32> left;
-    bitset<32> right;
-    bitset<32> new_left;
+    bitset<64> plain;         // Bitset to store the final decrypted plaintext
+    bitset<64> current_bits;  // Intermediate bitset to hold values during processing
+    bitset<32> left;          // Left 32 bits of the block
+    bitset<32> right;         // Right 32 bits of the block
+    bitset<32> new_left;      // Temporary variable to store updated left half
 
-    // Initial permutation of the ciphertext
-    for(int i = 0; i < 64; ++i)
+    // Step 1: Apply the initial permutation (IP) to the ciphertext
+    for (int i = 0; i < 64; ++i)
         current_bits[63 - i] = cipher[64 - ip[i]];
 
-    // Split the ciphertext into left and right halves
-    for(int i = 32; i < 64; ++i)
-        left[i - 32] = current_bits[i];
-    for(int i = 0; i < 32; ++i)
-        right[i] = current_bits[i];
+    // Step 2: Split the permuted block into left and right 32-bit halves
+    for (int i = 32; i < 64; ++i)
+        left[i - 32] = current_bits[i];  // Left = bits 32 to 63
+    for (int i = 0; i < 32; ++i)
+        right[i] = current_bits[i];      // Right = bits 0 to 31
 
-    // Perform 16 rounds of DES decryption
-    for(int round = 0; round < 16; ++round)
+    // Step 3: Perform 16 rounds of the Feistel structure in reverse order
+    for (int round = 0; round < 16; ++round)
     {
-        // Save the previous left half
-        new_left = right;
-        // Compute the new right half using the round function and subkey in reverse order
+        new_left = right;  // Save the current right half to use as new left
+        // New right = previous left XOR f(right, subkey for this round in reverse order)
         right = left ^ f(right, sub_key[15 - round]);
-        // Set the new left half to the previous right half
-        left = new_left;
+        left = new_left;   // Update left to previous right
     }
 
-    // Combine the left and right halves
-    for(int i = 0; i < 32; ++i)
-        plain[i] = left[i];
-    for(int i = 32; i < 64; ++i)
-        plain[i] = right[i - 32];
+    // Step 4: Combine the final left and right halves (no swap before IP⁻¹)
+    for (int i = 0; i < 32; ++i)
+        plain[i] = left[i];           // Lower half
+    for (int i = 32; i < 64; ++i)
+        plain[i] = right[i - 32];     // Upper half
 
-    // Final permutation of the plaintext
+    // Step 5: Apply the inverse initial permutation (IP⁻¹) to produce the plaintext
     current_bits = plain;
-    for(int i = 0; i < 64; ++i)
+    for (int i = 0; i < 64; ++i)
         plain[63 - i] = current_bits[64 - ip_1[i]];
 
-    return plain;
+    return plain; // Return the 64-bit decrypted plaintext
 }
+
 
 int main() {
     string plain_text, key_text;
