@@ -349,49 +349,48 @@ string bitset_to_string(bitset<64> bit) {
 }
 
 
-// Function to encrypt the plaintext using DES algorithm
+// Function to encrypt the plaintext using the DES algorithm
 bitset<64> encrypt(bitset<64>& plain)
 {
-    bitset<64> cipher;     // Create a bitset to store the encrypted ciphertext
-    bitset<64> current_bits;
-    bitset<32> left;
-    bitset<32> right;
-    bitset<32> new_left;
+    bitset<64> cipher;        // Bitset to store the final ciphertext
+    bitset<64> current_bits;  // Bitset to hold the intermediate result after initial permutation
+    bitset<32> left;          // Left 32 bits of the data block
+    bitset<32> right;         // Right 32 bits of the data block
+    bitset<32> new_left;      // Temporary variable to store new left after each round
 
-    // Initial permutation of the plaintext
-    for(int i = 0; i < 64; ++i)
+    // Step 1: Apply the initial permutation (IP) to the plaintext
+    for (int i = 0; i < 64; ++i)
         current_bits[63 - i] = plain[64 - ip[i]];
 
-    // Split the plaintext into left and right halves
-    for(int i = 32; i < 64; ++i)
-        left[i - 32] = current_bits[i];
-    for(int i = 0; i < 32; ++i)
-        right[i] = current_bits[i];
-    
-    // Perform 16 rounds of DES encryption
-    for(int round = 0; round < 16; ++round)
-    {
-        // Save the previous left half
-        new_left = right;
-        // Compute the new right half using the round function and subkey
-        right = left ^ f(right, sub_key[round]);
-        // Set the new left half to the previous right half
-        left = new_left;
-    }
-    
-    // Combine the left and right halves
-    for(int i = 0; i < 32; ++i)
-        cipher[i] = left[i];
-    for(int i = 32; i < 64; ++i)
-        cipher[i] = right[i - 32];
+    // Step 2: Split the permuted block into left and right halves (32 bits each)
+    for (int i = 32; i < 64; ++i)
+        left[i - 32] = current_bits[i];   // Left half = bits 32 to 63
+    for (int i = 0; i < 32; ++i)
+        right[i] = current_bits[i];       // Right half = bits 0 to 31
 
-    // Final permutation of the ciphertext
-    current_bits = cipher;
-    for(int i = 0; i < 64; ++i)
+    // Step 3: Perform 16 rounds of DES Feistel processing
+    for (int round = 0; round < 16; ++round)
+    {
+        new_left = right;  // Save current right as new left
+        // New right = previous left XOR f(right, subkey for this round)
+        right = left ^ f(right, sub_key[round]);
+        left = new_left;   // Update left to previously saved right
+    }
+
+    // Step 4: Combine the final left and right halves (note: no swap at the end)
+    for (int i = 0; i < 32; ++i)
+        cipher[i] = left[i];            // Left half goes to lower bits
+    for (int i = 32; i < 64; ++i)
+        cipher[i] = right[i - 32];      // Right half goes to higher bits
+
+    // Step 5: Apply the inverse initial permutation (IP⁻¹) to get the final ciphertext
+    current_bits = cipher;  // Save the combined block
+    for (int i = 0; i < 64; ++i)
         cipher[63 - i] = current_bits[64 - ip_1[i]];
 
-    return cipher;
+    return cipher;  // Return the 64-bit encrypted ciphertext
 }
+
 
 // Function to decrypt the ciphertext using DES algorithm
 bitset<64> decrypt(bitset<64>& cipher)
