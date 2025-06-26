@@ -324,19 +324,30 @@ bitset<64> char_to_bitset(const char s[8])
 }
 
 
-// Function to convert a bitset to a string
-string bitset_to_string(bitset<64> bit){
-    string res;
-    for(int i = 0; i < 8; ++i){
-        char c = 0x00;
-        for(int j = 7; j >= 0; j--){
-            c = c + bit[i * 8 + j];     
-            if(j != 0) c = c * 2;   // Left shift
-        }       
+// Function to convert a 64-bit bitset back into an 8-character string
+string bitset_to_string(bitset<64> bit) {
+    string res; // Result string to store the decoded characters
+
+    // Loop through 8 characters (8 bits per character)
+    for (int i = 0; i < 8; ++i) {
+        char c = 0x00; // Initialize character with 0
+
+        // Reconstruct each character from its 8 bits (MSB to LSB within the byte)
+        for (int j = 7; j >= 0; j--) {
+            c += bit[i * 8 + j];   // Add the current bit (0 or 1) to the character
+
+            // If not at the last bit, shift left by 1 (equivalent to multiplying by 2)
+            if (j != 0)
+                c *= 2;
+        }
+
+        // Append the reconstructed character to the result string
         res.push_back(c);
     }
-    return res;
+
+    return res; // Return the reconstructed string
 }
+
 
 // Function to encrypt the plaintext using DES algorithm
 bitset<64> encrypt(bitset<64>& plain)
