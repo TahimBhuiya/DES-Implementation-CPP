@@ -452,20 +452,29 @@ int main() {
         return 1;  // Exit the program with an error code
     }
 
-    // (Rest of the code would typically include conversion to bitsets, key generation, and encryption/decryption)
-}
+    
 
 
+
+    // Convert the 8-character plaintext string to a 64-bit bitset
     bitset<64> plain = char_to_bitset(plain_text.c_str());
+
+    // Convert the 8-character key string to a 64-bit bitset (global 'key' variable is assumed)
     key = char_to_bitset(key_text.c_str());
 
-    generate_keys();   // Generate subkeys for encryption and decryption
+    // Generate 16 round subkeys from the main key using the DES key schedule
+    generate_keys(); 
 
-    bitset<64> cipher = encrypt(plain); // Encrypt the plaintext
-    cout << "Cipher Text: " << cipher << endl;
+    // Encrypt the plaintext bitset using the DES algorithm
+    bitset<64> cipher = encrypt(plain);
+    cout << "Cipher Text: " << cipher << endl;  // Display the encrypted ciphertext as a 64-bit binary string
 
-    bitset<64> decrypted_plain = decrypt(cipher); // Decrypt the ciphertext
+    // Decrypt the ciphertext back to plaintext using the DES algorithm
+    bitset<64> decrypted_plain = decrypt(cipher);
+    
+    // Convert the 64-bit decrypted bitset back to a human-readable string
     cout << "Decrypted Plain Text: " << bitset_to_string(decrypted_plain) << endl;
 
-    return 0;
+    return 0;  // Exit the program successfully
+
 }
