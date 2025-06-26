@@ -21,7 +21,7 @@ DES (Data Encryption Standard) is a symmetric-key algorithm that encrypts data i
 
 1. Compile the C++ code:
    ```bash
-   g++ -std=c++11 -o des des.cpp
+   g++ -std=c++11 -o des DES_Implementation.cpp
    ```
 2. Run the compiled program:
    ```bash
@@ -33,6 +33,11 @@ DES (Data Encryption Standard) is a symmetric-key algorithm that encrypts data i
    - Encrypted ciphertext in binary
    - Decrypted text
 
+You may also copy and paste the following code block into **any C++ compiler or IDE of your choice**, such as:
+- Code::Blocks
+- Visual Studio
+- Replit
+- Terminal with `g++`
 ---
 
 ## 🧠 Code Description
