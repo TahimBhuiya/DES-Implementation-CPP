@@ -451,11 +451,6 @@ int main() {
         cout << "Error: Plaintext and key must be 64 bits each." << endl;
         return 1;  // Exit the program with an error code
     }
-
-    
-
-
-
     // Convert the 8-character plaintext string to a 64-bit bitset
     bitset<64> plain = char_to_bitset(plain_text.c_str());
 
